@@ -1,6 +1,6 @@
--- [[ ADMIN MASS SPAMMER V12 - SOLID BUTTON FIX ]] --
+-- [[ ADMIN MASS SPAMMER V13 - SMALLER BUTTON & UI FIX ]] --
 return function()
-    if game.CoreGui:FindFirstChild("AdminV12") then game.CoreGui.AdminV12:Destroy() end
+    if game.CoreGui:FindFirstChild("AdminV13") then game.CoreGui.AdminV13:Destroy() end
 
     local _d = function(h)
         local s = ""
@@ -16,83 +16,85 @@ return function()
     local ev = game:GetService(_R):WaitForChild(_F):WaitForChild(_G)
     local pos = Vector3.new(1988.84, 450.69, 184.16)
 
-    local sg = Instance.new("ScreenGui", game.CoreGui); sg.Name = "AdminV12"
-    sg.DisplayOrder = 999 -- Memastikan di atas segalanya
+    local sg = Instance.new("ScreenGui", game.CoreGui); sg.Name = "AdminV13"
+    sg.DisplayOrder = 100 -- Memastikan di atas UI game
     
-    -- TOMBOL SHOW/HIDE (SOLID - TIDAK INVIS)
+    -- TOMBOL SHOW/HIDE (UKURAN LEBIH KECIL & SOLID)
     local tglBtn = Instance.new("ImageButton", sg)
-    tglBtn.Size = UDim2.new(0, 60, 0, 60)
-    tglBtn.Position = UDim2.new(0, 20, 0.5, -30)
-    tglBtn.BackgroundColor3 = Color3.fromRGB(0, 100, 255) -- Biru Terang Solid
-    tglBtn.Image = "rbxassetid://6031280882" -- Ikon Shield
-    tglBtn.ZIndex = 1000 -- Paling depan
+    tglBtn.Name = "HideShowButton"
+    tglBtn.Size = UDim2.new(0, 42, 0, 42) -- Ukuran diperkecil dari 60 ke 42
+    tglBtn.Position = UDim2.new(0, 15, 0.5, 20) -- Digeser sedikit ke bawah agar tidak ganggu chat
+    tglBtn.BackgroundColor3 = Color3.fromRGB(0, 102, 204) -- Biru Solid
+    tglBtn.Image = "rbxassetid://6031280882" -- Ikon Shield/Gear
+    tglBtn.ZIndex = 10
     tglBtn.Active = true
-    tglBtn.Draggable = true
-    Instance.new("UICorner", tglBtn).CornerRadius = UDim.new(1, 0)
-    local stroke = Instance.new("UIStroke", tglBtn); stroke.Color = Color3.new(1,1,1); stroke.Thickness = 2
+    tglBtn.Draggable = true -- Masih bisa kamu geser manual jika kurang pas
+    Instance.new("UICorner", tglBtn).CornerRadius = UDim.new(0, 8)
+    local stroke = Instance.new("UIStroke", tglBtn); stroke.Color = Color3.new(1,1,1); stroke.Thickness = 1.5
 
     -- PANEL UTAMA
     local main = Instance.new("Frame", sg)
-    main.Size = UDim2.new(0, 460, 0, 300)
-    main.Position = UDim2.new(0.5, -230, 0.5, -150)
+    main.Name = "MainFrame"
+    main.Size = UDim2.new(0, 440, 0, 260) -- Sedikit lebih ramping
+    main.Position = UDim2.new(0.5, -220, 0.5, -130)
     main.BackgroundColor3 = Color3.new(0, 0, 0)
-    main.BackgroundTransparency = 0.4 -- Panel tetap invis dikit biar keren
-    main.Visible = true
+    main.BackgroundTransparency = 0.4 -- Background tetap transparan elegan
     main.Active = true
     main.Draggable = true
+    main.Visible = true
     Instance.new("UICorner", main)
 
-    -- Header
+    -- Title Header
     local header = Instance.new("TextLabel", main)
-    header.Size = UDim2.new(1, 0, 0, 35)
-    header.Text = "  ADMIN CONTROL V12 (STABLE)"
+    header.Size = UDim2.new(1, 0, 0, 32)
+    header.Text = "  ADMIN CONTROL PANEL V13"
     header.TextColor3 = Color3.new(1,1,1)
-    header.BackgroundColor3 = Color3.fromRGB(30,30,30)
-    header.Font = Enum.Font.GothamBold
-    header.TextXAlignment = "Left"
+    header.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    header.Font = Enum.Font.GothamBold; header.TextSize = 13; header.TextXAlignment = "Left"
+    Instance.new("UICorner", header)
 
-    -- Inputs (Solid Background agar teks jelas)
-    local function createInp(ph, def, x, y)
-        local i = Instance.new("TextBox", main)
-        i.Size = UDim2.new(0, 215, 0, 38)
-        i.Position = UDim2.new(0, x, 0, y)
-        i.Text = def; i.PlaceholderText = ph
-        i.BackgroundColor3 = Color3.fromRGB(45, 45, 45) -- Solid
-        i.TextColor3 = Color3.new(1,1,1); i.Font = Enum.Font.SourceSans
-        i.ClearTextOnFocus = false
-        Instance.new("UICorner", i)
-        return i
+    -- Inputs Area (SOLID BACKGROUND)
+    local function createField(ph, def, x, y)
+        local f = Instance.new("TextBox", main)
+        f.Size = UDim2.new(0, 205, 0, 34)
+        f.Position = UDim2.new(0, x, 0, y)
+        f.Text = def; f.PlaceholderText = ph
+        f.BackgroundColor3 = Color3.fromRGB(45, 45, 45) -- Solid
+        f.TextColor3 = Color3.new(1,1,1); f.Font = Enum.Font.SourceSans; f.TextSize = 14
+        f.ClearTextOnFocus = false
+        Instance.new("UICorner", f).CornerRadius = UDim.new(0, 4)
+        return f
     end
 
-    local inN = createInp("Fish Name", "Goldfish", 10, 45)
-    local inR = createInp("Rarity", "Common", 10, 90)
-    local inW = createInp("Weight", "5000", 10, 135)
-    local inA = createInp("Amount", "100", 10, 180)
-    local inD = createInp("Delay", "0.05", 10, 225)
+    local inN = createField("Fish Name", "Goldfish", 10, 42)
+    local inR = createField("Rarity", "Common", 10, 82)
+    local inW = createField("Weight", "5000", 10, 122)
+    local inA = createField("Amount", "100", 10, 162)
+    local inD = createField("Delay", "0.05", 10, 202)
 
-    -- Log Area
+    -- Log Area (Side)
     local logBox = Instance.new("ScrollingFrame", main)
-    logBox.Size = UDim2.new(0, 215, 0, 175)
-    logBox.Position = UDim2.new(0, 235, 0, 45)
+    logBox.Size = UDim2.new(0, 205, 0, 154)
+    logBox.Position = UDim2.new(0, 225, 0, 42)
     logBox.BackgroundColor3 = Color3.new(0,0,0); logBox.BackgroundTransparency = 0.5
-    logBox.CanvasSize = UDim2.new(0,0,10,0)
+    logBox.CanvasSize = UDim2.new(0, 0, 15, 0); logBox.ScrollBarThickness = 2
     Instance.new("UICorner", logBox)
 
     local function addLog(txt)
         local l = Instance.new("TextLabel", logBox)
-        l.Size = UDim2.new(1, 0, 0, 20); l.BackgroundTransparency = 1
-        l.Text = "> " .. txt; l.TextColor3 = Color3.new(0,1,0.7); l.TextSize = 12
+        l.Size = UDim2.new(1, -5, 0, 18); l.BackgroundTransparency = 1
+        l.Text = "> " .. txt; l.TextColor3 = Color3.fromRGB(0, 255, 150); l.TextSize = 11
         l.TextXAlignment = "Left"
-        logBox.CanvasPosition = Vector2.new(0, 9999)
+        logBox.CanvasPosition = Vector2.new(0, 99999)
     end
 
-    -- Buttons (SOLID - TIDAK INVIS)
+    -- Toggle Button (SOLID)
     local isRnd = true
     local tglR = Instance.new("TextButton", main)
-    tglR.Size = UDim2.new(0, 215, 0, 38)
-    tglR.Position = UDim2.new(0, 235, 0, 225)
-    tglR.Text = "Random Weight: ON"; tglR.TextColor3 = Color3.new(1,1,1)
-    tglR.BackgroundColor3 = Color3.fromRGB(0, 120, 0) -- Solid Hijau
+    tglR.Size = UDim2.new(0, 205, 0, 34)
+    tglR.Position = UDim2.new(0, 225, 0, 202)
+    tglR.Text = "Random Weight: ON"; tglR.TextColor3 = Color3.white
+    tglR.BackgroundColor3 = Color3.fromRGB(0, 120, 0) -- Solid
     Instance.new("UICorner", tglR)
 
     tglR.MouseButton1Click:Connect(function()
@@ -101,45 +103,45 @@ return function()
         tglR.BackgroundColor3 = isRnd and Color3.fromRGB(0, 120, 0) or Color3.fromRGB(150, 0, 0)
     end)
 
+    -- Launch Button (SOLID)
     local spamming = false
     local startBtn = Instance.new("TextButton", main)
-    startBtn.Size = UDim2.new(1, -20, 0, 40)
+    startBtn.Size = UDim2.new(1, -20, 0, 38)
     startBtn.Position = UDim2.new(0, 10, 1, -45)
-    startBtn.Text = "START MASS SPAM"; startBtn.Font = Enum.Font.GothamBold
-    startBtn.BackgroundColor3 = Color3.fromRGB(0, 100, 255) -- Solid Biru
-    startBtn.TextColor3 = Color3.new(1,1,1)
+    startBtn.Text = "LAUNCH MASS ATTACK"; startBtn.Font = Enum.Font.GothamBold
+    startBtn.BackgroundColor3 = Color3.fromRGB(0, 100, 230) -- Solid
+    startBtn.TextColor3 = Color3.white
     Instance.new("UICorner", startBtn)
 
     startBtn.MouseButton1Click:Connect(function()
-        if spamming then spamming = false startBtn.Text = "START MASS SPAM" return end
-        spamming = true; startBtn.Text = "STOP SPAMMING"
+        if spamming then spamming = false startBtn.Text = "LAUNCH MASS ATTACK" return end
+        spamming = true; startBtn.Text = "STOPPING SPAM..."
+        addLog("Attack Started.")
         
         local amt = tonumber(inA.Text) or 1
-        addLog("Launching spam...")
-        
         for i = 1, amt do
             if not spamming then break end
-            local w = isRnd and math.random(2000, 9000) or tonumber(inW.Text)
+            local w = isRnd and math.random(3000, 8000) or tonumber(inW.Text)
             pcall(function()
                 ev[_S](ev, {hookPosition = pos, name = inN.Text, rarity = inR.Text, weight = w})
             end)
-            if i % 10 == 0 then addLog("Sent " .. i .. " items") end
+            if i % 10 == 0 then addLog("Spammed: " .. i) end
             task.wait(tonumber(inD.Text) or 0.05)
         end
-        spamming = false; startBtn.Text = "START MASS SPAM"; addLog("Done!")
+        spamming = false; startBtn.Text = "LAUNCH MASS ATTACK"; addLog("Finished.")
     end)
 
-    -- Logika Toggle Panel
-    tglBtn.MouseButton1Click:Connect(function()
-        main.Visible = not main.Visible
-        print("Toggle Clicked: " .. tostring(main.Visible)) -- Debugging
-    end)
-
+    -- Close Button
     local cl = Instance.new("TextButton", main)
-    cl.Size = UDim2.new(0, 28, 0, 28); cl.Position = UDim2.new(1, -32, 0, 3.5)
-    cl.Text = "X"; cl.BackgroundColor3 = Color3.new(0.7,0,0); cl.TextColor3 = Color3.new(1,1,1)
-    Instance.new("UICorner", cl).CornerRadius = UDim.new(1,0)
+    cl.Size = UDim2.new(0, 26, 0, 26); cl.Position = UDim2.new(1, -30, 0, 3)
+    cl.Text = "✕"; cl.BackgroundColor3 = Color3.fromRGB(180, 0, 0); cl.TextColor3 = Color3.white
+    Instance.new("UICorner", cl).CornerRadius = UDim.new(1, 0)
     cl.MouseButton1Click:Connect(function() sg:Destroy() end)
 
-    addLog("System V12 Ready.")
+    -- Toggle Panel Logic (Fixed for Mobile)
+    tglBtn.MouseButton1Click:Connect(function()
+        main.Visible = not main.Visible
+    end)
+    
+    addLog("System Initialized.")
 end
