@@ -1,6 +1,6 @@
--- [[ ADMIN MASS SPAMMER V8 - ULTRA MINIMALIST ]] --
+-- [[ ADMIN MASS SPAMMER V9 - LANDSCAPE & LOG EDITION ]] --
 return function()
-    if game.CoreGui:FindFirstChild("AdminV8") then game.CoreGui.AdminV8:Destroy() end
+    if game.CoreGui:FindFirstChild("AdminV9") then game.CoreGui.AdminV9:Destroy() end
 
     local _d = function(h)
         local s = ""
@@ -16,101 +16,151 @@ return function()
     local ev = game:GetService(_R):WaitForChild(_F):WaitForChild(_G)
     local pos = Vector3.new(1988.84, 450.69, 184.16)
 
-    local sg = Instance.new("ScreenGui", game.CoreGui); sg.Name = "AdminV8"
+    local sg = Instance.new("ScreenGui", game.CoreGui); sg.Name = "AdminV9"
     
-    -- Panel Utama (Sangat Sederhana)
+    -- TOMBOL SHOW/HIDE (Floating)
+    local tglBtn = Instance.new("TextButton", sg)
+    tglBtn.Size = UDim2.new(0, 50, 0, 50)
+    tglBtn.Position = UDim2.new(0, 10, 0.5, -25)
+    tglBtn.BackgroundColor3 = Color3.fromRGB(0, 120, 255)
+    tglBtn.Text = "ADM"
+    tglBtn.TextColor3 = Color3.new(1, 1, 1)
+    tglBtn.Font = Enum.Font.GothamBold
+    tglBtn.Draggable = true
+    Instance.new("UICorner", tglBtn).CornerRadius = UDim.new(0, 10)
+
+    -- PANEL UTAMA (MODE LANDSCAPE / MELEBAR)
     local main = Instance.new("Frame", sg)
-    main.Size = UDim2.new(0, 250, 0, 350)
-    main.Position = UDim2.new(0.5, -125, 0.5, -175)
-    main.BackgroundColor3 = Color3.new(0.1, 0.1, 0.1) -- Abu-abu gelap polos
+    main.Size = UDim2.new(0, 450, 0, 280) -- Melebar ke samping
+    main.Position = UDim2.new(0.5, -225, 0.5, -140)
+    main.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
     main.Active = true
     main.Draggable = true
+    main.Visible = true
 
-    local title = Instance.new("TextLabel", main)
-    title.Size = UDim2.new(1, 0, 0, 30)
-    title.Text = "ADMIN SPAMMER V8"
-    title.TextColor3 = Color3.new(1, 1, 1)
-    title.BackgroundColor3 = Color3.new(0.2, 0.2, 0.2)
+    local header = Instance.new("TextLabel", main)
+    header.Size = UDim2.new(1, 0, 0, 30)
+    header.Text = "  ADMIN PANEL V9 - LANDSCAPE MODE"
+    header.TextColor3 = Color3.new(1, 1, 1)
+    header.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+    header.TextXAlignment = "Left"
 
-    -- Fungsi bantu buat Input agar pasti muncul
-    local function createInp(txt, def, y)
+    -- INPUT AREA (KIRI)
+    local function createInp(ph, def, x, y)
         local i = Instance.new("TextBox", main)
-        i.Size = UDim2.new(0.9, 0, 0, 30)
-        i.Position = UDim2.new(0.05, 0, 0, y)
+        i.Size = UDim2.new(0, 210, 0, 35)
+        i.Position = UDim2.new(0, x, 0, y)
         i.Text = def
-        i.PlaceholderText = txt
-        i.BackgroundColor3 = Color3.new(0.3, 0.3, 0.3)
+        i.PlaceholderText = ph
+        i.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
         i.TextColor3 = Color3.new(1, 1, 1)
         i.ClearTextOnFocus = false
         return i
     end
 
-    local inN = createInp("Name", "Goldfish", 40)
-    local inR = createInp("Rarity", "Common", 80)
-    local inW = createInp("Weight", "1000", 120)
-    local inA = createInp("Amount", "50", 160)
-    local inD = createInp("Delay", "0.05", 200)
+    local inN = createInp("Fish Name", "Goldfish", 10, 40)
+    local inR = createInp("Rarity", "Common", 10, 80)
+    local inW = createInp("Manual Weight", "1000", 10, 120)
+    local inA = createInp("Amount", "50", 10, 160)
+    local inD = createInp("Delay", "0.05", 10, 200)
 
-    -- Toggle Sederhana
+    -- LOG AREA (KANAN)
+    local logBox = Instance.new("ScrollingFrame", main)
+    logBox.Size = UDim2.new(0, 210, 0, 155)
+    logBox.Position = UDim2.new(0, 230, 0, 40)
+    logBox.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
+    logBox.CanvasSize = UDim2.new(0, 0, 5, 0)
+    logBox.ScrollBarThickness = 2
+
+    local logList = Instance.new("UIListLayout", logBox)
+    logList.SortOrder = Enum.SortOrder.LayoutOrder
+
+    local function addLog(txt)
+        local l = Instance.new("TextLabel", logBox)
+        l.Size = UDim2.new(1, 0, 0, 20)
+        l.BackgroundTransparency = 1
+        l.Text = "> " .. txt
+        l.TextColor3 = Color3.fromRGB(0, 255, 150)
+        l.TextSize = 12
+        l.TextXAlignment = "Left"
+        logBox.CanvasPosition = Vector2.new(0, 9999)
+    end
+
+    -- TOGGLE & BUTTON (BAWAH KANAN)
     local isRnd = true
     local tglR = Instance.new("TextButton", main)
-    tglR.Size = UDim2.new(0.9, 0, 0, 30)
-    tglR.Position = UDim2.new(0.05, 0, 0, 240)
+    tglR.Size = UDim2.new(0, 210, 0, 35)
+    tglR.Position = UDim2.new(0, 230, 0, 200)
     tglR.Text = "Random Weight: ON"
-    tglR.BackgroundColor3 = Color3.new(0, 0.4, 0)
+    tglR.BackgroundColor3 = Color3.fromRGB(0, 100, 0)
     tglR.TextColor3 = Color3.new(1, 1, 1)
 
     tglR.MouseButton1Click:Connect(function()
         isRnd = not isRnd
         tglR.Text = "Random Weight: " .. (isRnd and "ON" or "OFF")
-        tglR.BackgroundColor3 = isRnd and Color3.new(0, 0.4, 0) or Color3.new(0.4, 0, 0)
+        tglR.BackgroundColor3 = isRnd and Color3.fromRGB(0, 100, 0) or Color3.fromRGB(120, 0, 0)
     end)
 
-    -- Start Button
     local spamming = false
-    local btn = Instance.new("TextButton", main)
-    btn.Size = UDim2.new(0.9, 0, 0, 40)
-    btn.Position = UDim2.new(0.05, 0, 0, 280)
-    btn.Text = "START SPAM"
-    btn.BackgroundColor3 = Color3.new(0, 0.5, 1)
-    btn.TextColor3 = Color3.new(1, 1, 1)
+    local startBtn = Instance.new("TextButton", main)
+    startBtn.Size = UDim2.new(1, -20, 0, 35)
+    startBtn.Position = UDim2.new(0, 10, 1, -40)
+    startBtn.Text = "START MASS ATTACK"
+    startBtn.BackgroundColor3 = Color3.fromRGB(0, 80, 200)
+    startBtn.TextColor3 = Color3.new(1, 1, 1)
+    startBtn.Font = Enum.Font.GothamBold
 
-    btn.MouseButton1Click:Connect(function()
+    startBtn.MouseButton1Click:Connect(function()
         if spamming then 
             spamming = false
-            btn.Text = "START SPAM"
+            startBtn.Text = "START MASS ATTACK"
+            startBtn.BackgroundColor3 = Color3.fromRGB(0, 80, 200)
             return 
         end
         spamming = true
-        btn.Text = "STOP"
+        startBtn.Text = "🛑 STOP SPAMMING"
+        startBtn.BackgroundColor3 = Color3.fromRGB(180, 0, 0)
         
-        local count = tonumber(inA.Text) or 1
-        local waitT = tonumber(inD.Text) or 0.05
+        local amt = tonumber(inA.Text) or 1
+        local delay = tonumber(inD.Text) or 0.05
         
-        for i = 1, count do
+        addLog("Starting spam: " .. amt .. " fish")
+        
+        for i = 1, amt do
             if not spamming then break end
-            local weight = isRnd and (math.random(1000, 5000)) or tonumber(inW.Text)
+            local weightVal = isRnd and (math.random(10000, 50000)/100) or tonumber(inW.Text)
             
             pcall(function()
                 ev[_S](ev, {
                     hookPosition = pos,
                     name = inN.Text,
                     rarity = inR.Text,
-                    weight = weight
+                    weight = weightVal
                 })
             end)
-            task.wait(waitT)
+            
+            if i % 5 == 0 then addLog("Sent " .. i .. " " .. inN.Text) end
+            task.wait(delay)
         end
+        
+        addLog("Spam Finished!")
         spamming = false
-        btn.Text = "START SPAM"
+        startBtn.Text = "START MASS ATTACK"
+        startBtn.BackgroundColor3 = Color3.fromRGB(0, 80, 200)
     end)
 
-    -- Close
-    local ex = Instance.new("TextButton", main)
-    ex.Size = UDim2.new(0, 30, 0, 30)
-    ex.Position = UDim2.new(1, -30, 0, 0)
-    ex.Text = "X"
-    ex.BackgroundColor3 = Color3.new(0.8, 0, 0)
-    ex.TextColor3 = Color3.new(1, 1, 1)
-    ex.MouseButton1Click:Connect(function() sg:Destroy() end)
+    -- CONTROLS
+    tglBtn.MouseButton1Click:Connect(function()
+        main.Visible = not main.Visible
+    end)
+
+    local close = Instance.new("TextButton", main)
+    close.Size = UDim2.new(0, 30, 0, 30)
+    close.Position = UDim2.new(1, -30, 0, 0)
+    close.Text = "X"
+    close.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
+    close.TextColor3 = Color3.new(1, 1, 1)
+    close.MouseButton1Click:Connect(function() sg:Destroy() end)
+    
+    addLog("Admin V9 Ready.")
 end
