@@ -7,11 +7,12 @@ return function()
     end
 
     -- [ ENKRIPSI REMOTES ]
-    local _RS = _d("ReplicatedStorage")
-    local _FY = _d("FishingSystem")
-    local _YG = _d("23462347G8235")
-    local _PF = _d("PublicFishCatch")
-    local _FS = _d("FireServer")
+    local _RS = _d("5265706c69636174656453746f72616765") -- ReplicatedStorage
+    local _FY = _d("46697368696e6753797374656d")        -- FishingSystem
+    local _YG = _d("32333436323334374738323335")        -- 23462347G8235
+    local _PF = _d("5075626c6963466973684361746368")    -- PublicFishCatch
+    local _FS = _d("46697265536572766572")              -- FireServer
+
     
     local st = game:GetService(_RS)
     local Folder = st:WaitForChild(_FY)
