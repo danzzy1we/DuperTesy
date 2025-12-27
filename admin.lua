@@ -1,7 +1,7 @@
--- [[ ADMIN MASS SPAMMER V16 - RANDOM WEIGHT STABLE ]] --
+-- [[ ADMIN MASS SPAMMER V18 - NO CONSOLE LOGS ]] --
 return function()
-    -- Pembersihan UI lama
-    local oldUI = game.CoreGui:FindFirstChild("AdminV16")
+    -- Hapus UI lama
+    local oldUI = game.CoreGui:FindFirstChild("DupeV1")
     if oldUI then oldUI:Destroy() end
 
     local _d = function(h)
@@ -19,7 +19,7 @@ return function()
     local pos = Vector3.new(1988.84, 450.69, 184.16)
 
     local sg = Instance.new("ScreenGui", game.CoreGui)
-    sg.Name = "AdminV16"
+    sg.Name = "DupeV1"
     sg.DisplayOrder = 999
 
     -- TOMBOL BUKA/TUTUP (ADM)
@@ -37,7 +37,7 @@ return function()
     local main = Instance.new("Frame", sg)
     main.Size = UDim2.new(0, 440, 0, 280)
     main.Position = UDim2.new(0.5, -220, 0.5, -140)
-    main.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+    main.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
     main.Visible = true
     main.Active = true
     Instance.new("UICorner", main)
@@ -45,8 +45,8 @@ return function()
     -- Header
     local title = Instance.new("TextLabel", main)
     title.Size = UDim2.new(1, 0, 0, 35)
-    title.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-    title.Text = "  ADMIN PANEL V16 - RANDOM WEIGHT"
+    title.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+    title.Text = "  DUPE PANEL- OPTIMIZED"
     title.TextColor3 = Color3.new(1, 1, 1)
     title.Font = Enum.Font.GothamBold
     title.TextXAlignment = "Left"
@@ -59,25 +59,26 @@ return function()
         i.Position = UDim2.new(0, x, 0, y)
         i.Text = def
         i.PlaceholderText = ph
-        i.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+        i.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
         i.TextColor3 = Color3.new(1, 1, 1)
         i.ClearTextOnFocus = false
         Instance.new("UICorner", i)
         return i
     end
 
-    local inN = createInp("Name", "Goldfish", 15, 45)
-    local inR = createInp("Rarity", "Common", 15, 85)
-    local inW = createInp("Manual Weight", "5000", 15, 125)
+    local inN = createInp("Name", "El Maja", 15, 45)
+    local inR = createInp("Rarity", "Secret", 15, 85)
+    local inW = createInp("Manual Weight", "676.7", 15, 125)
     local inA = createInp("Amount", "100", 15, 165)
     local inD = createInp("Delay", "0.05", 15, 205)
 
-    -- Log Area
+    -- Log Area (UI Only, No Console)
     local logBox = Instance.new("ScrollingFrame", main)
     logBox.Size = UDim2.new(0, 200, 0, 152)
     logBox.Position = UDim2.new(0, 225, 0, 45)
     logBox.BackgroundColor3 = Color3.new(0, 0, 0)
     logBox.CanvasSize = UDim2.new(0, 0, 15, 0)
+    logBox.ScrollBarThickness = 2
     Instance.new("UICorner", logBox)
 
     local function addLog(msg)
@@ -85,66 +86,63 @@ return function()
         l.Size = UDim2.new(1, 0, 0, 18)
         l.BackgroundTransparency = 1
         l.Text = "> " .. msg
-        l.TextColor3 = Color3.fromRGB(0, 255, 150)
+        l.TextColor3 = Color3.fromRGB(0, 255, 180)
         l.TextSize = 10
         l.TextXAlignment = "Left"
         logBox.CanvasPosition = Vector2.new(0, 9999)
     end
 
-    -- TOMBOL RANDOM WEIGHT (ON/OFF)
+    -- Toggle Random Weight
     local isRandom = true
     local rndBtn = Instance.new("TextButton", main)
     rndBtn.Size = UDim2.new(0, 200, 0, 32)
     rndBtn.Position = UDim2.new(0, 225, 0, 205)
-    rndBtn.BackgroundColor3 = Color3.fromRGB(0, 150, 0)
+    rndBtn.BackgroundColor3 = Color3.fromRGB(0, 150, 80)
     rndBtn.Text = "Random Weight: ON"
-    rndBtn.TextColor3 = Color3.new(1, 1, 1)
+    rndBtn.TextColor3 = Color3.white
     rndBtn.Font = Enum.Font.GothamBold
     Instance.new("UICorner", rndBtn)
 
     rndBtn.MouseButton1Click:Connect(function()
         isRandom = not isRandom
-        if isRandom then
-            rndBtn.Text = "Random Weight: ON"
-            rndBtn.BackgroundColor3 = Color3.fromRGB(0, 150, 0)
-            inW.Visible = false -- Sembunyikan input manual jika random aktif
-        else
-            rndBtn.Text = "Random Weight: OFF"
-            rndBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
-            inW.Visible = true
-        end
+        rndBtn.Text = "Random Weight: " .. (isRandom and "ON" or "OFF")
+        rndBtn.BackgroundColor3 = isRandom and Color3.fromRGB(0, 150, 80) or Color3.fromRGB(150, 0, 0)
+        inW.Visible = not isRandom
     end)
-    inW.Visible = false -- Default sembunyi karena awal ON
+    inW.Visible = false
 
-    -- Launch Button
+    -- Attack Button
     local spamming = false
     local startBtn = Instance.new("TextButton", main)
     startBtn.Size = UDim2.new(1, -20, 0, 35)
     startBtn.Position = UDim2.new(0, 10, 1, -40)
-    startBtn.BackgroundColor3 = Color3.fromRGB(0, 100, 255)
-    startBtn.Text = "LAUNCH MASS ATTACK"
-    startBtn.TextColor3 = Color3.new(1, 1, 1)
+    startBtn.BackgroundColor3 = Color3.fromRGB(0, 110, 220)
+    startBtn.Text = "LAUNCH ATTACK"
+    startBtn.TextColor3 = Color3.white
     startBtn.Font = Enum.Font.GothamBold
     Instance.new("UICorner", startBtn)
 
     startBtn.MouseButton1Click:Connect(function()
-        if spamming then 
-            spamming = false
-            startBtn.Text = "LAUNCH MASS ATTACK"
-            return 
-        end
+        if spamming then spamming = false startBtn.Text = "LAUNCH ATTACK" return end
         spamming = true
-        startBtn.Text = "STOP ATTACK"
+        startBtn.Text = "STOPPING..."
         
         local amt = tonumber(inA.Text) or 1
-        addLog("Attack Started: " .. amt)
-        
+        addLog("Attack Started...")
+
         for i = 1, amt do
             if not spamming then break end
             
-            -- Logika Random Weight
-            local finalWeight = isRandom and math.random(3000, 9500) or (tonumber(inW.Text) or 5000)
+            local finalWeight
+            if isRandom then
+                local base = math.random(200, 750) 
+                local decimal = math.random(1, 9)
+                finalWeight = base + (decimal / 10)
+            else
+                finalWeight = tonumber(inW.Text) or 676.7
+            end
             
+            -- Pcall digunakan untuk menangkap error tanpa merusak game
             pcall(function()
                 ev[_S](ev, {
                     hookPosition = pos,
@@ -154,13 +152,14 @@ return function()
                 })
             end)
             
-            if i % 10 == 0 then addLog("Sent: " .. i) end
+            -- Hanya update log di UI setiap 10 item untuk hemat tenaga HP
+            if i % 10 == 0 then addLog("Sent: " .. i .. " [" .. finalWeight .. "]") end
             task.wait(tonumber(inD.Text) or 0.05)
         end
         
         spamming = false
-        startBtn.Text = "LAUNCH MASS ATTACK"
-        addLog("Finished.")
+        startBtn.Text = "LAUNCH ATTACK"
+        addLog("Done.")
     end)
 
     tglBtn.MouseButton1Click:Connect(function()
@@ -171,10 +170,10 @@ return function()
     cls.Size = UDim2.new(0, 30, 0, 30)
     cls.Position = UDim2.new(1, -35, 0, 2.5)
     cls.Text = "X"
-    cls.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
-    cls.TextColor3 = Color3.new(1, 1, 1)
+    cls.BackgroundColor3 = Color3.fromRGB(180, 0, 0)
+    cls.TextColor3 = Color3.white
     Instance.new("UICorner", cls).CornerRadius = UDim.new(1, 0)
     cls.MouseButton1Click:Connect(function() sg:Destroy() end)
 
-    addLog("V16 Ready.")
+    addLog("DUPE Ready (Silent Console)")
 end
