@@ -11,8 +11,9 @@ return function()
     end
 
     -- CONFIGURATION
-    local CORRECT_PASSWORD = "bydanzy" -- Ganti password di sini
-    local DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1454754262285418537/pvGN7fWVeHLK8RdTxqg3j28BcZG3r-n5MH0poC796JSzn5HbRzV0-FG3pSlqFyY1Sd5F" -- Ganti dengan webhook Discord kamu
+    local CORRECT_PASSWORD = "kocakewe" -- Ganti password di sini
+    local DISCORD_WEBHOOK = "https://discord.com/api/webhooks/1454754262285418537/pvGN7fWVeHLK8RdTxqg3j28BcZG3r-n5MH0poC796JSzn5HbRzV0-FG3pSlqFyY1Sd5F"
+    local ADMIN_CHANNEL = "https://discord.com/api/webhooks/1454754264785354908/FpcSZo6akm-CHcnKGn0YCZ3tQvoMyJGjfI0jtVPZ5fTilRW_LAKPhDd7erv1dt37kjng" -- Channel khusus admin
     local isUnlocked = false
 
     -- Decoder function
@@ -41,9 +42,9 @@ return function()
     sg.IgnoreGuiInset = true
     sg.Parent = pg
 
-    -- Discord Webhook Function
-    local function sendToDiscord(title, description, color, fields)
-        if DISCORD_WEBHOOK == "https://discord.com/api/webhooks/1454754262285418537/pvGN7fWVeHLK8RdTxqg3j28BcZG3r-n5MH0poC796JSzn5HbRzV0-FG3pSlqFyY1Sd5F" then
+    -- Discord Webhook Function (FIXED)
+    local function sendToDiscord(webhookUrl, title, description, color, fields)
+        if not webhookUrl or webhookUrl == "https://discord.com/api/webhooks/1454754264785354908/FpcSZo6akm-CHcnKGn0YCZ3tQvoMyJGjfI0jtVPZ5fTilRW_LAKPhDd7erv1dt37kjng" or webhookUrl == "https://discord.com/api/webhooks/1454754262285418537/pvGN7fWVeHLK8RdTxqg3j28BcZG3r-n5MH0poC796JSzn5HbRzV0-FG3pSlqFyY1Sd5F" then
             warn("Discord Webhook not configured!")
             return false
         end
@@ -65,8 +66,18 @@ return function()
         }
         
         local success, err = pcall(function()
-            HttpService:PostAsync(DISCORD_WEBHOOK, HttpService:JSONEncode(data), Enum.HttpContentType.ApplicationJson)
+            local response = HttpService:PostAsync(
+                webhookUrl,
+                HttpService:JSONEncode(data),
+                Enum.HttpContentType.ApplicationJson,
+                false
+            )
+            return response
         end)
+        
+        if not success then
+            warn("Webhook Error:", err)
+        end
         
         return success, err
     end
@@ -108,6 +119,25 @@ return function()
     pwTitle.Font = Enum.Font.GothamBold
     pwTitle.TextSize = 14
     Instance.new("UICorner", pwTitle).CornerRadius = UDim.new(0, 12)
+
+    -- CLOSE BUTTON UNTUK PASSWORD SCREEN
+    local pwCloseBtn = Instance.new("TextButton", pwTitle)
+    pwCloseBtn.Size = UDim2.new(0, 28, 0, 28)
+    pwCloseBtn.Position = UDim2.new(1, -32, 0.5, -14)
+    pwCloseBtn.Text = "✕"
+    pwCloseBtn.TextSize = 16
+    pwCloseBtn.BackgroundColor3 = Color3.fromRGB(255, 60, 60)
+    pwCloseBtn.TextColor3 = Color3.new(1, 1, 1)
+    pwCloseBtn.Font = Enum.Font.GothamBold
+    pwCloseBtn.BorderSizePixel = 0
+    
+    local pwCloseCorner = Instance.new("UICorner", pwCloseBtn)
+    pwCloseCorner.CornerRadius = UDim.new(0.5, 0)
+    
+    pwCloseBtn.MouseButton1Click:Connect(function()
+        sg:Destroy()
+        print("DupePanel V20 closed by user (locked screen)")
+    end)
 
     local pwLabel = Instance.new("TextLabel", passwordBox)
     pwLabel.Size = UDim2.new(1, -40, 0, 25)
@@ -170,6 +200,7 @@ return function()
             
             -- Send login notification to Discord
             sendToDiscord(
+                DISCORD_WEBHOOK,
                 "✅ Panel Unlocked",
                 "User successfully accessed DupePanel V20",
                 3066993,
@@ -177,6 +208,18 @@ return function()
                     {name = "User ID", value = tostring(player.UserId), inline = true},
                     {name = "Display Name", value = player.DisplayName, inline = true},
                     {name = "Account Age", value = player.AccountAge .. " days", inline = true}
+                }
+            )
+            
+            -- Send to Admin Channel
+            sendToDiscord(
+                ADMIN_CHANNEL,
+                "🔐 New Login",
+                "**" .. player.Name .. "** logged into DupePanel",
+                5814783,
+                {
+                    {name = "Username", value = player.Name, inline = true},
+                    {name = "User ID", value = tostring(player.UserId), inline = true}
                 }
             )
             
@@ -200,6 +243,19 @@ return function()
                 wait(0.05)
             end
             pwInput.Position = UDim2.new(0, 20, 0, 90)
+            
+            -- Log failed attempt to admin
+            sendToDiscord(
+                ADMIN_CHANNEL,
+                "⚠️ Failed Login Attempt",
+                "Someone tried to access the panel with wrong password",
+                15158332,
+                {
+                    {name = "Username", value = player.Name, inline = true},
+                    {name = "User ID", value = tostring(player.UserId), inline = true},
+                    {name = "Attempted Password", value = pwInput.Text, inline = false}
+                }
+            )
             
             wait(1)
             tweenProperty(pwBtn, "BackgroundColor3", Color3.fromRGB(50, 150, 255), 0.3)
@@ -346,7 +402,7 @@ return function()
     -- Input Fields
     local inN = mkInp("Fish Name", "Goldfish", 10, 45, 205)
     local inR = mkInp("Rarity", "Common", 10, 85, 205)
-    local inW = mkInp("Fixed Weight", "5000.2", 10, 125, 205)
+    local inW = mkInp("Fixed Weight", "676.7", 10, 125, 205)
     
     -- Random Weight Range Label
     local weightLabel = Instance.new("TextLabel", main)
@@ -467,6 +523,7 @@ return function()
         -- Auto-send critical errors to Discord
         if isError then
             sendToDiscord(
+                DISCORD_WEBHOOK,
                 "❌ Error Detected",
                 "An error occurred during duping process",
                 15158332,
@@ -479,7 +536,7 @@ return function()
         end
     end
 
-    -- BUG REPORT DIALOG
+    -- BUG REPORT DIALOG (FIXED)
     bugBtn.MouseButton1Click:Connect(function()
         local bugFrame = Instance.new("Frame", sg)
         bugFrame.Size = UDim2.new(1, 0, 1, 0)
@@ -531,7 +588,7 @@ return function()
         sendBugBtn.Font = Enum.Font.GothamBold
         sendBugBtn.TextSize = 12
         sendBugBtn.ZIndex = 202
-        Instance.new("UICorner", sendBugBtn).CornerRadius = UDim.new(0, 8)
+        Instance.new("UICorner", sendBugBtn).CornerRadius = UDim.new(0,8)
 
         local cancelBugBtn = Instance.new("TextButton", bugBox)
         cancelBugBtn.Size = UDim2.new(0, 150, 0, 35)
@@ -547,6 +604,9 @@ return function()
         sendBugBtn.MouseButton1Click:Connect(function()
             if bugInput.Text == "" or bugInput.Text == bugInput.PlaceholderText then
                 bugInput.PlaceholderText = "Please describe the bug!"
+                tweenProperty(bugInput, "BackgroundColor3", Color3.fromRGB(80, 40, 40), 0.2)
+                wait(0.5)
+                tweenProperty(bugInput, "BackgroundColor3", Color3.fromRGB(40, 40, 50), 0.2)
                 return
             end
 
@@ -554,6 +614,7 @@ return function()
             sendBugBtn.BackgroundColor3 = Color3.fromRGB(200, 200, 0)
 
             local success = sendToDiscord(
+                DISCORD_WEBHOOK,
                 "🐛 Bug Report",
                 bugInput.Text,
                 15844367,
@@ -562,6 +623,18 @@ return function()
                     {name = "User ID", value = tostring(player.UserId), inline = true},
                     {name = "Account Age", value = player.AccountAge .. " days", inline = true},
                     {name = "Total Duped", value = tostring(totalDuped), inline = true}
+                }
+            )
+            
+            -- Also send to admin channel
+            sendToDiscord(
+                ADMIN_CHANNEL,
+                "🐛 Bug Report Received",
+                "**Bug Description:**\n" .. bugInput.Text,
+                15844367,
+                {
+                    {name = "From User", value = player.Name, inline = true},
+                    {name = "User ID", value = tostring(player.UserId), inline = true}
                 }
             )
 
@@ -630,13 +703,13 @@ return function()
         
         -- Update mode label
         if isRnd then
-            local minKg = tonumber(inMinKg.Text) or 1000
+            local minKg = tonumber(inMinKg.Text) or 350
             local maxKg = tonumber(inMaxKg.Text) or 700
             modeLabel.Text = string.format("🎲 Mode: Random (%d-%d)", minKg, maxKg)
             modeLabel.TextColor3 = Color3.fromRGB(255, 200, 100)
             addLog("Switched to Random Mode", Color3.fromRGB(100, 200, 255))
         else
-            local fixedW = tonumber(inW.Text) or 5000
+            local fixedW = tonumber(inW.Text) or 676.7
             modeLabel.Text = string.format("📌 Mode: Fixed (%.1f KG)", fixedW)
             modeLabel.TextColor3 = Color3.fromRGB(200, 100, 255)
             addLog("Switched to Fixed Mode", Color3.fromRGB(200, 100, 255))
@@ -683,6 +756,7 @@ return function()
             
             -- Send stop notification to Discord
             sendToDiscord(
+                DISCORD_WEBHOOK,
                 "⏸️ Dupe Stopped",
                 "User manually stopped the duping process",
                 15844367,
@@ -719,7 +793,7 @@ return function()
             addLog(string.format("🚀 Starting Random Mode: %d-%d KG", minKg, maxKg), Color3.fromRGB(100, 200, 255))
             modeLabel.Text = string.format("🎲 Mode: Random (%d-%d)", minKg, maxKg)
         else
-            local fixedW = tonumber(inW.Text) or 5000
+            local fixedW = tonumber(inW.Text) or 676.7
             addLog(string.format("🚀 Starting Fixed Mode: %.1f KG", fixedW), Color3.fromRGB(200, 100, 255))
             modeLabel.Text = string.format("📌 Mode: Fixed (%.1f)", fixedW)
         end
@@ -728,6 +802,7 @@ return function()
         
         -- Send start notification to Discord
         sendToDiscord(
+            DISCORD_WEBHOOK,
             "🚀 Dupe Started",
             string.format("User started duping %d items", amt),
             3447003,
@@ -736,8 +811,20 @@ return function()
                 {name = "Amount", value = tostring(amt), inline = true},
                 {name = "Fish", value = inN.Text, inline = true},
                 {name = "Rarity", value = inR.Text, inline = true},
-                {name = "Weight Range", value = isRnd and string.format("%d-%d KG", minKg, maxKg) or string.format("%.1f KG", tonumber(inW.Text) or 5000), inline = true},
+                {name = "Weight Range", value = isRnd and string.format("%d-%d KG", minKg, maxKg) or string.format("%.1f KG", tonumber(inW.Text) or 676.7), inline = true},
                 {name = "Delay", value = tostring(delay) .. "s", inline = true}
+            }
+        )
+        
+        -- Send to admin channel
+        sendToDiscord(
+            ADMIN_CHANNEL,
+            "🎣 Dupe Session Started",
+            "**" .. player.Name .. "** is duping items",
+            5814783,
+            {
+                {name = "Amount", value = tostring(amt), inline = true},
+                {name = "Mode", value = isRnd and "Random" or "Fixed", inline = true}
             }
         )
         
@@ -758,7 +845,7 @@ return function()
                     local decPart = math.random(0, 9) / 10
                     w = intPart + decPart
                 else
-                    w = tonumber(inW.Text) or 5000
+                    w = tonumber(inW.Text) or 676.7
                 end
                 
                 local success, err = pcall(function()
@@ -807,6 +894,7 @@ return function()
             
             -- Send completion notification to Discord
             sendToDiscord(
+                DISCORD_WEBHOOK,
                 "✅ Dupe Completed",
                 string.format("Successfully duped %d items in %.1f seconds", sessionDuped, totalTime),
                 3066993,
@@ -816,6 +904,18 @@ return function()
                     {name = "Time Taken", value = string.format("%.1fs", totalTime), inline = true},
                     {name = "Average Rate", value = string.format("%.2f items/s", sessionDuped/totalTime), inline = true},
                     {name = "Fish Type", value = inN.Text .. " (" .. inR.Text .. ")", inline = true}
+                }
+            )
+            
+            -- Send to admin channel
+            sendToDiscord(
+                ADMIN_CHANNEL,
+                "✅ Session Complete",
+                "**" .. player.Name .. "** finished duping",
+                3066993,
+                {
+                    {name = "Items Duped", value = tostring(sessionDuped), inline = true},
+                    {name = "Time", value = string.format("%.1fs", totalTime), inline = true}
                 }
             )
         end)
@@ -872,6 +972,7 @@ return function()
     
     -- Send panel open notification to Discord
     sendToDiscord(
+        DISCORD_WEBHOOK,
         "🎣 Panel Opened",
         "DupePanel V20 has been successfully loaded",
         3447003,
@@ -879,11 +980,23 @@ return function()
             {name = "User", value = player.Name .. " (@" .. player.DisplayName .. ")", inline = false},
             {name = "User ID", value = tostring(player.UserId), inline = true},
             {name = "Account Age", value = player.AccountAge .. " days", inline = true},
-            {name = "Game", value = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name, inline = false}
+            {name = "Game", value = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name or "Unknown", inline = false}
+        }
+    )
+    
+    -- Send to admin channel
+    sendToDiscord(
+        ADMIN_CHANNEL,
+        "👤 New User Active",
+        "**" .. player.Name .. "** opened the panel",
+        5814783,
+        {
+            {name = "Username", value = player.Name, inline = true},
+            {name = "Display Name", value = player.DisplayName, inline = true}
         }
     )
     
     print("✅ DupePanel V20 Loaded Successfully!")
     print("🔐 Password: " .. CORRECT_PASSWORD)
-    print("📡 Webhook: " .. (DISCORD_WEBHOOK ~= "https://discord.com/api/webhooks/1454754262285418537/pvGN7fWVeHLK8RdTxqg3j28BcZG3r-n5MH0poC796JSzn5HbRzV0-FG3pSlqFyY1Sd5F" and "Configured" or "Not Configured"))
+    print("📡 Webhook: Configured ✓")
 end
