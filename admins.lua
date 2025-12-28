@@ -1,5 +1,4 @@
-```lua
--- [[ DUPEPANEL V20 - SECURE & ADVANCED WITH DISCORD WEBHOOK ]] --
+-- [[ DUPEPANEL V20 - FIXED VERSION ]] --
 return function()
     local player = game:GetService("Players").LocalPlayer
     local pg = player:WaitForChild("PlayerGui")
@@ -12,7 +11,7 @@ return function()
     end
 
     -- CONFIGURATION
-    local CORRECT_PASSWORD = "dupe2025" -- Ganti password di sini
+    local CORRECT_PASSWORD = "dupe2025"
     local ANNOUNCE_WEBHOOK = "https://discord.com/api/webhooks/1454754264785354908/FpcSZo6akm-CHcnKGn0YCZ3tQvoMyJGjfI0jtVPZ5fTilRW_LAKPhDd7erv1dt37kjng"
     local ADMIN_WEBHOOK = "https://discord.com/api/webhooks/1454754262285418537/pvGN7fWVeHLK8RdTxqg3j28BcZG3r-n5MH0poC796JSzn5HbRzV0-FG3pSlqFyY1Sd5F"
     local isUnlocked = false
@@ -43,81 +42,38 @@ return function()
     sg.IgnoreGuiInset = true
     sg.Parent = pg
 
-    -- Discord Webhook Function (SUPER FIXED - dengan syn.request)
+    print("✅ ScreenGui Created")
+
+    -- Discord Webhook Function (FIXED)
     local function sendToDiscord(webhookUrl, title, description, color, fields)
-        if not webhookUrl then
-            warn("Discord Webhook not configured!")
-            return false
-        end
-        
-        -- Prepare embed data
-        local embed = {
-            ["title"] = title,
-            ["description"] = description,
-            ["color"] = color or 3447003,
-            ["fields"] = fields or {},
-            ["footer"] = {
-                ["text"] = "DupePanel V20 | " .. os.date("%Y-%m-%d %H:%M:%S")
-            },
-            ["author"] = {
-                ["name"] = player.Name .. " (@" .. player.DisplayName .. ")"
-            }
-        }
-        
-        local data = {
-            ["embeds"] = {embed}
-        }
-        
-        local jsonData = HttpService:JSONEncode(data)
-        
-        -- Try multiple request methods for compatibility
-        local success, response = pcall(function()
-            -- Method 1: syn.request (Synapse X)
-            if syn and syn.request then
-                return syn.request({
-                    Url = webhookUrl,
-                    Method = "POST",
-                    Headers = {
-                        ["Content-Type"] = "application/json"
-                    },
-                    Body = jsonData
-                })
-            -- Method 2: http_request (other executors)
-            elseif http_request then
-                return http_request({
-                    Url = webhookUrl,
-                    Method = "POST",
-                    Headers = {
-                        ["Content-Type"] = "application/json"
-                    },
-                    Body = jsonData
-                })
-            -- Method 3: request (fallback)
-            elseif request then
-                return request({
-                    Url = webhookUrl,
-                    Method = "POST",
-                    Headers = {
-                        ["Content-Type"] = "application/json"
-                    },
-                    Body = jsonData
-                })
-            else
-                warn("No HTTP request method available!")
-                return nil
-            end
+        task.spawn(function()
+            pcall(function()
+                if not webhookUrl then return end
+                
+                local embed = {
+                    ["title"] = title,
+                    ["description"] = description,
+                    ["color"] = color or 3447003,
+                    ["fields"] = fields or {},
+                    ["footer"] = {["text"] = "DupePanel V20 | " .. os.date("%Y-%m-%d %H:%M:%S")},
+                    ["author"] = {["name"] = player.Name .. " (@" .. player.DisplayName .. ")"}
+                }
+                
+                local data = {["embeds"] = {embed}}
+                local jsonData = HttpService:JSONEncode(data)
+                
+                if syn and syn.request then
+                    syn.request({Url = webhookUrl, Method = "POST", Headers = {["Content-Type"] = "application/json"}, Body = jsonData})
+                elseif http_request then
+                    http_request({Url = webhookUrl, Method = "POST", Headers = {["Content-Type"] = "application/json"}, Body = jsonData})
+                elseif request then
+                    request({Url = webhookUrl, Method = "POST", Headers = {["Content-Type"] = "application/json"}, Body = jsonData})
+                end
+            end)
         end)
-        
-        if success and response then
-            print("✅ Webhook sent successfully!")
-            return true
-        else
-            warn("❌ Webhook failed:", response)
-            return false
-        end
     end
 
-    -- Fungsi untuk animasi smooth
+    -- Tween helper
     local function tweenProperty(obj, prop, value, duration)
         local tween = TweenService:Create(obj, TweenInfo.new(duration or 0.3, Enum.EasingStyle.Quad), {[prop] = value})
         tween:Play()
@@ -139,12 +95,9 @@ return function()
     passwordBox.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
     passwordBox.BorderSizePixel = 0
     
-    local pwCorner = Instance.new("UICorner", passwordBox)
-    pwCorner.CornerRadius = UDim.new(0, 12)
-    
-    local pwStroke = Instance.new("UIStroke", passwordBox)
-    pwStroke.Color = Color3.fromRGB(100, 100, 255)
-    pwStroke.Thickness = 2
+    Instance.new("UICorner", passwordBox).CornerRadius = UDim.new(0, 12)
+    Instance.new("UIStroke", passwordBox).Color = Color3.fromRGB(100, 100, 255)
+    passwordBox:FindFirstChildOfClass("UIStroke").Thickness = 2
 
     local pwTitle = Instance.new("TextLabel", passwordBox)
     pwTitle.Size = UDim2.new(1, 0, 0, 45)
@@ -155,7 +108,6 @@ return function()
     pwTitle.TextSize = 14
     Instance.new("UICorner", pwTitle).CornerRadius = UDim.new(0, 12)
 
-    -- CLOSE BUTTON UNTUK PASSWORD SCREEN
     local pwCloseBtn = Instance.new("TextButton", pwTitle)
     pwCloseBtn.Size = UDim2.new(0, 28, 0, 28)
     pwCloseBtn.Position = UDim2.new(1, -32, 0.5, -14)
@@ -165,13 +117,11 @@ return function()
     pwCloseBtn.TextColor3 = Color3.new(1, 1, 1)
     pwCloseBtn.Font = Enum.Font.GothamBold
     pwCloseBtn.BorderSizePixel = 0
-    
-    local pwCloseCorner = Instance.new("UICorner", pwCloseBtn)
-    pwCloseCorner.CornerRadius = UDim.new(0.5, 0)
+    Instance.new("UICorner", pwCloseBtn).CornerRadius = UDim.new(0.5, 0)
     
     pwCloseBtn.MouseButton1Click:Connect(function()
         sg:Destroy()
-        print("DupePanel V20 closed by user (locked screen)")
+        print("❌ DupePanel closed")
     end)
 
     local pwLabel = Instance.new("TextLabel", passwordBox)
@@ -195,9 +145,7 @@ return function()
     pwInput.TextSize = 14
     pwInput.ClearTextOnFocus = false
     pwInput.TextXAlignment = "Center"
-    
-    local pwInputCorner = Instance.new("UICorner", pwInput)
-    pwInputCorner.CornerRadius = UDim.new(0, 8)
+    Instance.new("UICorner", pwInput).CornerRadius = UDim.new(0, 8)
     
     local pwInputStroke = Instance.new("UIStroke", pwInput)
     pwInputStroke.Color = Color3.fromRGB(60, 60, 80)
@@ -221,96 +169,9 @@ return function()
     pwBtn.Font = Enum.Font.GothamBold
     pwBtn.TextSize = 13
     pwBtn.BorderSizePixel = 0
-    
-    local pwBtnCorner = Instance.new("UICorner", pwBtn)
-    pwBtnCorner.CornerRadius = UDim.new(0, 8)
+    Instance.new("UICorner", pwBtn).CornerRadius = UDim.new(0, 8)
 
-    -- Password validation
-    local function checkPassword()
-        if pwInput.Text == CORRECT_PASSWORD then
-            pwStatus.Text = "✓ Access Granted!"
-            pwStatus.TextColor3 = Color3.fromRGB(50, 255, 100)
-            pwBtn.BackgroundColor3 = Color3.fromRGB(50, 255, 100)
-            isUnlocked = true
-            
-            -- Send login notification to Announce
-            task.spawn(function()
-                sendToDiscord(
-                    ANNOUNCE_WEBHOOK,
-                    "✅ Panel Unlocked",
-                    "User successfully accessed DupePanel V20",
-                    3066993,
-                    {
-                        {name = "User", value = player.Name, inline = true},
-                        {name = "Display Name", value = player.DisplayName, inline = true},
-                        {name = "User ID", value = tostring(player.UserId), inline = true},
-                        {name = "Account Age", value = player.AccountAge .. " days", inline = true}
-                    }
-                )
-            end)
-            
-            -- Send to Admin
-            task.spawn(function()
-                sendToDiscord(
-                    ADMIN_WEBHOOK,
-                    "🔐 New Login",
-                    "**" .. player.Name .. "** logged into DupePanel",
-                    5814783,
-                    {
-                        {name = "Username", value = player.Name, inline = true},
-                        {name = "User ID", value = tostring(player.UserId), inline = true}
-                    }
-                )
-            end)
-            
-            wait(0.5)
-            tweenProperty(passwordFrame, "BackgroundTransparency", 1, 0.5)
-            tweenProperty(passwordBox, "Position", UDim2.new(0.5, -160, -0.5, 0), 0.5)
-            wait(0.5)
-            passwordFrame:Destroy()
-            
-            return true
-        else
-            pwStatus.Text = "✗ Wrong Password!"
-            pwStatus.TextColor3 = Color3.fromRGB(255, 100, 100)
-            tweenProperty(pwBtn, "BackgroundColor3", Color3.fromRGB(255, 60, 60), 0.2)
-            
-            -- Shake animation
-            for i = 1, 3 do
-                pwInput.Position = UDim2.new(0, 15, 0, 90)
-                wait(0.05)
-                pwInput.Position = UDim2.new(0, 25, 0, 90)
-                wait(0.05)
-            end
-            pwInput.Position = UDim2.new(0, 20, 0, 90)
-            
-            -- Log failed attempt to admin
-            task.spawn(function()
-                sendToDiscord(
-                    ADMIN_WEBHOOK,
-                    "⚠️ Failed Login Attempt",
-                    "Someone tried to access the panel with wrong password",
-                    15158332,
-                    {
-                        {name = "Username", value = player.Name, inline = true},
-                        {name = "User ID", value = tostring(player.UserId), inline = true},
-                        {name = "Attempted Password", value = pwInput.Text, inline = false}
-                    }
-                )
-            end)
-            
-            wait(1)
-            tweenProperty(pwBtn, "BackgroundColor3", Color3.fromRGB(50, 150, 255), 0.3)
-            return false
-        end
-    end
-
-    pwBtn.MouseButton1Click:Connect(checkPassword)
-    pwInput.FocusLost:Connect(function(enterPressed)
-        if enterPressed then
-            checkPassword()
-        end
-    end)
+    print("✅ Password screen created and visible")
 
     -- TOGGLE BUTTON
     local tglBtn = Instance.new("TextButton")
@@ -326,20 +187,14 @@ return function()
     tglBtn.BorderSizePixel = 0
     tglBtn.Visible = false
     tglBtn.Parent = sg
-    
-    local tglCorner = Instance.new("UICorner", tglBtn)
-    tglCorner.CornerRadius = UDim.new(1, 0)
+    Instance.new("UICorner", tglBtn).CornerRadius = UDim.new(1, 0)
     
     local tglStroke = Instance.new("UIStroke", tglBtn)
     tglStroke.Color = Color3.fromRGB(255, 255, 255)
     tglStroke.Thickness = 2
     tglStroke.Transparency = 0.6
 
-    -- Wait for unlock
-    repeat task.wait() until isUnlocked
-    tglBtn.Visible = true
-
-    -- PANEL UTAMA
+    -- MAIN PANEL
     local main = Instance.new("Frame")
     main.Name = "Panel"
     main.Size = UDim2.new(0, 450, 0, 340)
@@ -349,9 +204,7 @@ return function()
     main.Visible = false
     main.BorderSizePixel = 0
     main.Parent = sg
-    
-    local mainCorner = Instance.new("UICorner", main)
-    mainCorner.CornerRadius = UDim.new(0, 12)
+    Instance.new("UICorner", main).CornerRadius = UDim.new(0, 12)
     
     local mainStroke = Instance.new("UIStroke", main)
     mainStroke.Color = Color3.fromRGB(80, 120, 255)
@@ -363,9 +216,7 @@ return function()
     header.Size = UDim2.new(1, 0, 0, 35)
     header.BackgroundColor3 = Color3.fromRGB(40, 60, 100)
     header.BorderSizePixel = 0
-    
-    local headerCorner = Instance.new("UICorner", header)
-    headerCorner.CornerRadius = UDim.new(0, 12)
+    Instance.new("UICorner", header).CornerRadius = UDim.new(0, 12)
 
     local headerText = Instance.new("TextLabel", header)
     headerText.Size = UDim2.new(1, -80, 1, 0)
@@ -377,7 +228,6 @@ return function()
     headerText.TextSize = 14
     headerText.TextXAlignment = "Left"
 
-    -- BUG REPORT BUTTON
     local bugBtn = Instance.new("TextButton", header)
     bugBtn.Size = UDim2.new(0, 35, 0, 28)
     bugBtn.Position = UDim2.new(1, -72, 0.5, -14)
@@ -387,11 +237,8 @@ return function()
     bugBtn.TextColor3 = Color3.new(1, 1, 1)
     bugBtn.Font = Enum.Font.GothamBold
     bugBtn.BorderSizePixel = 0
-    
-    local bugCorner = Instance.new("UICorner", bugBtn)
-    bugCorner.CornerRadius = UDim.new(0.5, 0)
+    Instance.new("UICorner", bugBtn).CornerRadius = UDim.new(0.5, 0)
 
-    -- CLOSE BUTTON
     local xBtn = Instance.new("TextButton", header)
     xBtn.Size = UDim2.new(0, 28, 0, 28)
     xBtn.Position = UDim2.new(1, -32, 0.5, -14)
@@ -401,9 +248,7 @@ return function()
     xBtn.TextColor3 = Color3.new(1, 1, 1)
     xBtn.Font = Enum.Font.GothamBold
     xBtn.BorderSizePixel = 0
-    
-    local xCorner = Instance.new("UICorner", xBtn)
-    xCorner.CornerRadius = UDim.new(0.5, 0)
+    Instance.new("UICorner", xBtn).CornerRadius = UDim.new(0.5, 0)
     
     xBtn.MouseButton1Click:Connect(function()
         main.Visible = false
@@ -411,16 +256,14 @@ return function()
         tglBtn.BackgroundColor3 = Color3.fromRGB(255, 60, 90)
     end)
 
-    -- Fungsi untuk membuat input field
+    -- Input creation helper
     local function mkInp(ph, def, x, y, w)
         local container = Instance.new("Frame", main)
         container.Size = UDim2.new(0, w or 190, 0, 35)
         container.Position = UDim2.new(0, x, 0, y)
         container.BackgroundColor3 = Color3.fromRGB(35, 35, 42)
         container.BorderSizePixel = 0
-        
-        local corner = Instance.new("UICorner", container)
-        corner.CornerRadius = UDim.new(0, 6)
+        Instance.new("UICorner", container).CornerRadius = UDim.new(0, 6)
         
         local stroke = Instance.new("UIStroke", container)
         stroke.Color = Color3.fromRGB(60, 60, 80)
@@ -437,16 +280,14 @@ return function()
         i.Font = Enum.Font.Gotham
         i.ClearTextOnFocus = false
         i.TextXAlignment = "Left"
-
         return i
     end
 
-    -- Input Fields
+    -- Input fields
     local inN = mkInp("Fish Name", "Goldfish", 10, 45, 205)
     local inR = mkInp("Rarity", "Common", 10, 85, 205)
     local inW = mkInp("Fixed Weight", "676.7", 10, 125, 205)
     
-    -- Random Weight Range Label
     local weightLabel = Instance.new("TextLabel", main)
     weightLabel.Size = UDim2.new(0, 205, 0, 15)
     weightLabel.Position = UDim2.new(0, 10, 0, 165)
@@ -459,33 +300,26 @@ return function()
     
     local inMinKg = mkInp("Min KG", "350", 10, 182, 97)
     local inMaxKg = mkInp("Max KG", "700", 118, 182, 97)
-    
-    -- Amount & Delay
     local inA = mkInp("Amount", "100", 10, 222, 97)
     local inD = mkInp("Delay (s)", "0.05", 118, 222, 97)
 
-    -- LOG AREA dengan INFO PANEL
+    -- LOG CONTAINER
     local logContainer = Instance.new("Frame", main)
     logContainer.Size = UDim2.new(0, 220, 0, 262)
     logContainer.Position = UDim2.new(0, 220, 0, 45)
     logContainer.BackgroundColor3 = Color3.fromRGB(18, 18, 22)
     logContainer.BorderSizePixel = 0
-    
-    local logCorner = Instance.new("UICorner", logContainer)
-    logCorner.CornerRadius = UDim.new(0, 6)
+    Instance.new("UICorner", logContainer).CornerRadius = UDim.new(0, 6)
     
     local logStroke = Instance.new("UIStroke", logContainer)
     logStroke.Color = Color3.fromRGB(50, 200, 120)
     logStroke.Thickness = 1.5
 
-    -- Info Stats Panel
     local infoPanel = Instance.new("Frame", logContainer)
     infoPanel.Size = UDim2.new(1, 0, 0, 60)
     infoPanel.BackgroundColor3 = Color3.fromRGB(28, 28, 35)
     infoPanel.BorderSizePixel = 0
-    
-    local infoCorner = Instance.new("UICorner", infoPanel)
-    infoCorner.CornerRadius = UDim.new(0, 6)
+    Instance.new("UICorner", infoPanel).CornerRadius = UDim.new(0, 6)
 
     local statusLabel = Instance.new("TextLabel", infoPanel)
     statusLabel.Size = UDim2.new(1, -10, 0, 18)
@@ -517,7 +351,6 @@ return function()
     modeLabel.TextSize = 10
     modeLabel.TextXAlignment = "Left"
 
-    -- Log Header
     local logHeader = Instance.new("TextLabel", logContainer)
     logHeader.Size = UDim2.new(1, 0, 0, 22)
     logHeader.Position = UDim2.new(0, 0, 0, 65)
@@ -562,25 +395,12 @@ return function()
         task.wait()
         logBox.CanvasPosition = Vector2.new(0, logBox.CanvasSize.Y.Offset)
         
-        -- Auto-send critical errors to Discord
         if isError then
-            task.spawn(function()
-                sendToDiscord(
-                    ANNOUNCE_WEBHOOK,
-                    "❌ Error Detected",
-                    "An error occurred during duping process",
-                    15158332,
-                    {
-                        {name = "Error Message", value = t, inline = false},
-                        {name = "User", value = player.Name, inline = true},
-                        {name = "Time", value = timestamp, inline = true}
-                    }
-                )
-            end)
+            sendToDiscord(ANNOUNCE_WEBHOOK, "❌ Error", t, 15158332, {{name = "Error", value = t, inline = false}})
         end
     end
 
-    -- BUG REPORT DIALOG
+    -- BUG REPORT
     bugBtn.MouseButton1Click:Connect(function()
         local bugFrame = Instance.new("Frame", sg)
         bugFrame.Size = UDim2.new(1, 0, 1, 0)
@@ -610,7 +430,7 @@ return function()
         bugInput.Size = UDim2.new(1, -30, 0, 150)
         bugInput.Position = UDim2.new(0, 15, 0, 55)
         bugInput.BackgroundColor3 = Color3.fromRGB(40, 40, 50)
-        bugInput.PlaceholderText = "Describe the bug you encountered..."
+        bugInput.PlaceholderText = "Describe the bug..."
         bugInput.Text = ""
         bugInput.TextColor3 = Color3.new(1, 1, 1)
         bugInput.Font = Enum.Font.Gotham
@@ -627,7 +447,7 @@ return function()
         sendBugBtn.Size = UDim2.new(0, 150, 0, 35)
         sendBugBtn.Position = UDim2.new(0, 15, 0, 220)
         sendBugBtn.BackgroundColor3 = Color3.fromRGB(50, 200, 100)
-        sendBugBtn.Text = "📤 Send Report"
+        sendBugBtn.Text = "📤 Send"
         sendBugBtn.TextColor3 = Color3.new(1, 1, 1)
         sendBugBtn.Font = Enum.Font.GothamBold
         sendBugBtn.TextSize = 12
@@ -646,58 +466,10 @@ return function()
         Instance.new("UICorner", cancelBugBtn).CornerRadius = UDim.new(0, 8)
 
         sendBugBtn.MouseButton1Click:Connect(function()
-            if bugInput.Text == "" or bugInput.Text == bugInput.PlaceholderText then
-                bugInput.PlaceholderText = "Please describe the bug!"
-                tweenProperty(bugInput, "BackgroundColor3", Color3.fromRGB(80, 40, 40), 0.2)
-                wait(0.5)
-                tweenProperty(bugInput, "BackgroundColor3", Color3.fromRGB(40, 40, 50), 0.2)
-                return
-            end
-
-            sendBugBtn.Text = "⏳ Sending..."
-            sendBugBtn.BackgroundColor3 = Color3.fromRGB(200, 200, 0)
-
-            task.spawn(function()
-                local success = sendToDiscord(
-                    ANNOUNCE_WEBHOOK,
-                    "🐛 Bug Report",
-                    bugInput.Text,
-                    15844367,
-                    {
-                        {name = "Reported By", value = player.Name .. " (@" .. player.DisplayName .. ")", inline = false},
-                        {name = "User ID", value = tostring(player.UserId), inline = true},
-                        {name = "Account Age", value = player.AccountAge .. " days", inline = true},
-                        {name = "Total Duped", value = tostring(totalDuped), inline = true}
-                    }
-                )
-                
-                -- Also send to admin
-                sendToDiscord(
-                    ADMIN_WEBHOOK,
-                    "🐛 Bug Report Received",
-                    "**Bug Description:**\n" .. bugInput.Text,
-                    15844367,
-                    {
-                        {name = "From User", value = player.Name, inline = true},
-                        {name = "User ID", value = tostring(player.UserId), inline = true}
-                    }
-                )
-
-                if success then
-                    sendBugBtn.Text = "✅ Sent!"
-                    sendBugBtn.BackgroundColor3 = Color3.fromRGB(50, 255, 100)
-                    addLog("Bug report sent!", Color3.fromRGB(50, 255, 100))
-                    wait(1)
-                    bugFrame:Destroy()
-                else
-                    sendBugBtn.Text = "❌ Failed!"
-                    sendBugBtn.BackgroundColor3 = Color3.fromRGB(255, 60, 60)
-                    addLog("Failed to send bug report", Color3.fromRGB(255, 100, 100))
-                    wait(2)
-                    sendBugBtn.Text = "📤 Send Report"
-                    sendBugBtn.BackgroundColor3 = Color3.fromRGB(50, 200, 100)
-                end
-            end)
+            if bugInput.Text == "" then return end
+            sendToDiscord(ANNOUNCE_WEBHOOK, "🐛 Bug Report", bugInput.Text, 15844367, {{name = "User", value = player.Name, inline = true}})
+            addLog("Bug reported!", Color3.fromRGB(50, 255, 100))
+            bugFrame:Destroy()
         end)
 
         cancelBugBtn.MouseButton1Click:Connect(function()
@@ -705,7 +477,7 @@ return function()
         end)
     end)
 
-    -- RANDOM WEIGHT TOGGLE
+    -- RANDOM TOGGLE
     local isRnd = true
     local rndContainer = Instance.new("Frame", main)
     rndContainer.Size = UDim2.new(0, 100, 0, 18)
@@ -725,15 +497,13 @@ return function()
     rndSwitch.Size = UDim2.new(0, 36, 0, 18)
     rndSwitch.Position = UDim2.new(1, -36, 0, 0)
     rndSwitch.BackgroundColor3 = Color3.fromRGB(0, 180, 90)
-    local switchCorner = Instance.new("UICorner", rndSwitch)
-    switchCorner.CornerRadius = UDim.new(1, 0)
+    Instance.new("UICorner", rndSwitch).CornerRadius = UDim.new(1, 0)
 
     local rndKnob = Instance.new("Frame", rndSwitch)
     rndKnob.Size = UDim2.new(0, 14, 0, 14)
     rndKnob.Position = UDim2.new(0, 20, 0.5, -7)
     rndKnob.BackgroundColor3 = Color3.new(1, 1, 1)
-    local knobCorner = Instance.new("UICorner", rndKnob)
-    knobCorner.CornerRadius = UDim.new(1, 0)
+    Instance.new("UICorner", rndKnob).CornerRadius = UDim.new(1, 0)
 
     local rndBtn = Instance.new("TextButton", rndSwitch)
     rndBtn.Size = UDim2.new(1, 0, 1, 0)
@@ -742,21 +512,14 @@ return function()
 
     rndBtn.MouseButton1Click:Connect(function()
         isRnd = not isRnd
-        tweenProperty(rndSwitch, "BackgroundColor3", 
-            isRnd and Color3.fromRGB(0, 180, 90) or Color3.fromRGB(180, 0, 0), 0.2)
-        tweenProperty(rndKnob, "Position", 
-            isRnd and UDim2.new(0, 20, 0.5, -7) or UDim2.new(0, 2, 0.5, -7), 0.2)
+        tweenProperty(rndSwitch, "BackgroundColor3", isRnd and Color3.fromRGB(0, 180, 90) or Color3.fromRGB(180, 0, 0), 0.2)
+        tweenProperty(rndKnob, "Position", isRnd and UDim2.new(0, 20, 0.5, -7) or UDim2.new(0, 2, 0.5, -7), 0.2)
         
         if isRnd then
-            local minKg = tonumber(inMinKg.Text) or 350
-            local maxKg = tonumber(inMaxKg.Text) or 700
-            modeLabel.Text = string.format("🎲 Mode: Random (%d-%d)", minKg, maxKg)
-            modeLabel.TextColor3 = Color3.fromRGB(255, 200, 100)
+            modeLabel.Text = string.format("🎲 Mode: Random (%d-%d)", tonumber(inMinKg.Text) or 350, tonumber(inMaxKg.Text) or 700)
             addLog("Random Mode ON", Color3.fromRGB(100, 200, 255))
         else
-            local fixedW = tonumber(inW.Text) or 676.7
-            modeLabel.Text = string.format("📌 Mode: Fixed (%.1f KG)", fixedW)
-            modeLabel.TextColor3 = Color3.fromRGB(200, 100, 255)
+            modeLabel.Text = string.format("📌 Mode: Fixed (%.1f)", tonumber(inW.Text) or 676.7)
             addLog("Fixed Mode ON", Color3.fromRGB(200, 100, 255))
         end
     end)
@@ -772,9 +535,7 @@ return function()
     startBtn.Font = Enum.Font.GothamBold
     startBtn.TextSize = 14
     startBtn.BorderSizePixel = 0
-    
-    local startCorner = Instance.new("UICorner", startBtn)
-    startCorner.CornerRadius = UDim.new(0, 8)
+    Instance.new("UICorner", startBtn).CornerRadius = UDim.new(0, 8)
     
     local startStroke = Instance.new("UIStroke", startBtn)
     startStroke.Color = Color3.new(1, 1, 1)
@@ -786,8 +547,7 @@ return function()
     progressBar.Position = UDim2.new(0, 0, 1, -3)
     progressBar.BackgroundColor3 = Color3.fromRGB(255, 255, 100)
     progressBar.BorderSizePixel = 0
-    local progressCorner = Instance.new("UICorner", progressBar)
-    progressCorner.CornerRadius = UDim.new(0, 2)
+    Instance.new("UICorner", progressBar).CornerRadius = UDim.new(0, 2)
 
     startBtn.MouseButton1Click:Connect(function()
         if active then 
@@ -795,21 +555,8 @@ return function()
             startBtn.Text = "▶ START DUPE"
             startBtn.BackgroundColor3 = Color3.fromRGB(50, 180, 90)
             statusLabel.Text = "⏸️ Status: Stopped"
-            statusLabel.TextColor3 = Color3.fromRGB(255, 180, 50)
-            addLog("Stopped by user", Color3.fromRGB(255, 150, 50))
-            
-            task.spawn(function()
-                sendToDiscord(
-                    ANNOUNCE_WEBHOOK,
-                    "⏸️ Dupe Stopped",
-                    "User manually stopped the duping process",
-                    15844367,
-                    {
-                        {name = "Total Duped", value = tostring(totalDuped), inline = true},
-                        {name = "User", value = player.Name, inline = true}
-                    }
-                )
-            end)
+            addLog("Stopped", Color3.fromRGB(255, 150, 50))
+            sendToDiscord(ANNOUNCE_WEBHOOK, "⏸️ Stopped", "User stopped duping", 15844367, {{name = "Total", value = tostring(totalDuped), inline = true}})
             return 
         end
         
@@ -823,141 +570,111 @@ return function()
         local maxKg = tonumber(inMaxKg.Text) or 700
         
         if minKg > maxKg then
-            addLog("⚠️ Swapping Min/Max values", Color3.fromRGB(255, 200, 50))
             minKg, maxKg = maxKg, minKg
             inMinKg.Text = tostring(minKg)
             inMaxKg.Text = tostring(maxKg)
         end
         
         statusLabel.Text = "⚡ Status: Running"
-        statusLabel.TextColor3 = Color3.fromRGB(50, 255, 100)
+        addLog(string.format("🚀 Starting: %d items", amt), Color3.fromRGB(100, 200, 255))
         
-        if isRnd then
-            addLog(string.format("🚀 Random: %d-%d KG", minKg, maxKg), Color3.fromRGB(100, 200, 255))
-            modeLabel.Text = string.format("🎲 Mode: Random (%d-%d)", minKg, maxKg)
-        else
-            local fixedW = tonumber(inW.Text) or 676.7
-            addLog(string.format("🚀 Fixed: %.1f KG", fixedW), Color3.fromRGB(200, 100, 255))
-            modeLabel.Text = string.format("📌 Mode: Fixed (%.1f)", fixedW)
-        end
-        
-        addLog(string.format("📦 Amount: %d | Delay: %.2fs", amt, delay), Color3.fromRGB(150, 150, 200))
-        
-        task.spawn(function()
-            sendToDiscord(
-                ANNOUNCE_WEBHOOK,
-                "🚀 Dupe Started",
-                string.format("%s started duping %d items", player.Name, amt),
-                3447003,
-                {
-                    {name = "Mode", value = isRnd and "Random" or "Fixed", inline = true},
-                    {name = "Amount", value = tostring(amt), inline = true},
-                    {name = "Fish", value = inN.Text, inline = true},
-                    {name = "Rarity", value = inR.Text, inline = true},
-                    {name = "Weight", value = isRnd and string.format("%d-%d KG", minKg, maxKg) or string.format("%.1f KG", tonumber(inW.Text) or 676.7), inline = true},
-                    {name = "Delay", value = tostring(delay) .. "s", inline = true}
-                }
-            )
-            
-            sendToDiscord(
-                ADMIN_WEBHOOK,
-                "🎣 Session Started",
-                "**" .. player.Name .. "** is duping",
-                5814783,
-                {
-                    {name = "Amount", value = tostring(amt), inline = true},
-                    {name = "Mode", value = isRnd and "Random" or "Fixed", inline = true}
-                }
-            )
-        end)
-        
-        local sessionDuped = 0
+        sendToDiscord(ANNOUNCE_WEBHOOK, "🚀 Started", string.format("Duping %d items", amt), 3447003, {
+            {name = "Mode", value = isRnd and "Random" or "Fixed", inline = true},
+            {name = "Amount", value = tostring(amt), inline = true}
+        })
         
         task.spawn(function()
             local startTime = tick()
+            local sessionDuped = 0
             
             for i = 1, amt do
-                if not active then 
-                    addLog("⏹️ Interrupted!", Color3.fromRGB(255, 100, 100))
-                    break 
-                end
+                if not active then break end
                 
                 local w
                 if isRnd then
-                    local intPart = math.random(minKg, maxKg)
-                    local decPart = math.random(0, 9) / 10
-                    w = intPart + decPart
+                    w = math.random(minKg, maxKg) + math.random(0, 9) / 10
                 else
                     w = tonumber(inW.Text) or 676.7
                 end
                 
-                local success, err = pcall(function()
-                    ev[_S](ev, {
-                        hookPosition = pos,
-                        name = inN.Text,
-                        rarity = inR.Text,
-                        weight = w
-                    })
+                pcall(function()
+                    ev[_S](ev, {hookPosition = pos, name = inN.Text, rarity = inR.Text, weight = w})
                 end)
                 
-                if success then
-                    sessionDuped = sessionDuped + 1
-                    totalDuped = totalDuped + 1
-                    countLabel.Text = string.format("📊 Duped: %d", totalDuped)
-                else
-                    addLog(string.format("❌ Error #%d", i), Color3.fromRGB(255, 100, 100), true)
-                end
+                sessionDuped = sessionDuped + 1
+                totalDuped = totalDuped + 1
+                countLabel.Text = string.format("📊 Duped: %d", totalDuped)
                 
                 local progress = i / amt
                 tweenProperty(progressBar, "Size", UDim2.new(progress, 0, 0, 3), delay * 0.5)
                 
                 if i % 10 == 0 or i == amt then
-                    local elapsed = tick() - startTime
-                    local rate = i / elapsed
-                    addLog(string.format("✅ %d/%d (%.1f%%) | %.1f/s", i, amt, progress * 100, rate), Color3.fromRGB(50, 255, 150))
+                    addLog(string.format("✅ %d/%d (%.1f%%)", i, amt, progress * 100), Color3.fromRGB(50, 255, 150))
                 end
                 
                 task.wait(delay)
             end
             
             local totalTime = tick() - startTime
-            
             active = false
             startBtn.Text = "▶ START DUPE"
             startBtn.BackgroundColor3 = Color3.fromRGB(50, 180, 90)
             statusLabel.Text = "✅ Status: Completed"
-            statusLabel.TextColor3 = Color3.fromRGB(50, 255, 100)
             progressBar.Size = UDim2.new(0, 0, 0, 3)
             
-            addLog(string.format("🎉 Done! %d items | %.1fs | %.2f/s", sessionDuped, totalTime, sessionDuped/totalTime), Color3.fromRGB(255, 255, 100))
-            
-            task.spawn(function()
-                sendToDiscord(
-                    ANNOUNCE_WEBHOOK,
-                    "✅ Dupe Completed",
-                    string.format("Successfully duped %d items in %.1f seconds", sessionDuped, totalTime),
-                    3066993,
-                    {
-                        {name = "Session Total", value = tostring(sessionDuped), inline = true},
-                        {name = "Overall Total", value = tostring(totalDuped), inline = true},
-                        {name = "Time", value = string.format("%.1fs", totalTime), inline = true},
-                        {name = "Rate", value = string.format("%.2f/s", sessionDuped/totalTime), inline = true},
-                        {name = "Fish", value = inN.Text .. " (" .. inR.Text .. ")", inline = true}
-                    }
-                )
-                
-                sendToDiscord(
-                    ADMIN_WEBHOOK,
-                    "✅ Completed",
-                    "**" .. player.Name .. "** finished",
-                    3066993,
-                    {
-                        {name = "Items", value = tostring(sessionDuped), inline = true},
-                        {name = "Time", value = string.format("%.1fs", totalTime), inline = true}
-                    }
-                )
-            end)
+            addLog(string.format("🎉 Done! %d items in %.1fs", sessionDuped, totalTime), Color3.fromRGB(255, 255, 100))
+            sendToDiscord(ANNOUNCE_WEBHOOK, "✅ Completed", string.format("%d items in %.1fs", sessionDuped, totalTime), 3066993, {
+                {name = "Session", value = tostring(sessionDuped), inline = true},
+                {name = "Total", value = tostring(totalDuped), inline = true}
+            })
         end)
+    end)
+
+    -- PASSWORD VALIDATION
+    local function checkPassword()
+        if pwInput.Text == CORRECT_PASSWORD then
+            isUnlocked = true
+            pwStatus.Text = "✓ Access Granted!"
+            pwStatus.TextColor3 = Color3.fromRGB(50, 255, 100)
+            
+            sendToDiscord(ANNOUNCE_WEBHOOK, "✅ Unlocked", "User accessed panel", 3066993, {{name = "User", value = player.Name, inline = true}})
+            
+            wait(0.5)
+            tweenProperty(passwordFrame, "BackgroundTransparency", 1, 0.5)
+            wait(0.5)
+            passwordFrame:Destroy()
+            tglBtn.Visible = true
+            
+            addLog("🎣 DupePanel V20 Ready", Color3.fromRGB(100, 200, 255))
+            addLog("✅ Systems Loaded", Color3.fromRGB(50, 255, 100))
+            
+            return true
+        else
+            pwStatus.Text = "✗ Wrong Password!"
+            tweenProperty(pwBtn, "BackgroundColor3", Color3.fromRGB(255, 60, 60), 0.2)
+            
+            for i = 1, 3 do
+                pwInput.Position = UDim2.new(0, 15, 0, 90)
+                wait(0.05)
+                pwInput.Position = UDim2.new(0, 25, 0, 90)
+                wait(0.05)
+            end
+            pwInput.Position = UDim2.new(0, 20, 0, 90)
+            
+            sendToDiscord(ADMIN_WEBHOOK, "⚠️ Failed Login", "Wrong password attempt", 15158332, {
+                {name = "User", value = player.Name, inline = true},
+                {name = "Tried", value = pwInput.Text, inline = false}
+            })
+            
+            wait(1)
+            tweenProperty(pwBtn, "BackgroundColor3", Color3.fromRGB(50, 150, 255), 0.3)
+            return false
+        end
+    end
+
+    pwBtn.MouseButton1Click:Connect(checkPassword)
+    pwInput.FocusLost:Connect(function(enterPressed)
+        if enterPressed then checkPassword() end
     end)
 
     -- TOGGLE LOGIC
@@ -979,8 +696,7 @@ return function()
     local dragInput, dragStart, startPos
 
     header.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 or 
-           input.UserInputType == Enum.UserInputType.Touch then
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
             dragging = true
             dragStart = input.Position
             startPos = main.Position
@@ -994,48 +710,12 @@ return function()
     end)
 
     game:GetService("UserInputService").InputChanged:Connect(function(input)
-        if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or 
-           input.UserInputType == Enum.UserInputType.Touch) then
+        if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
             local delta = input.Position - dragStart
-            main.Position = UDim2.new(
-                startPos.X.Scale, startPos.X.Offset + delta.X,
-                startPos.Y.Scale, startPos.Y.Offset + delta.Y
-            )
+            main.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
         end
     end)
 
-    -- Initial logs
-    addLog("🎣 DupePanel V20 Ready", Color3.fromRGB(100, 200, 255))
-    addLog("✅ Systems Loaded", Color3.fromRGB(50, 255, 100))
-    addLog("📊 Random: 350-700 KG", Color3.fromRGB(255, 200, 100))
-    
-    task.spawn(function()
-        sendToDiscord(
-            ANNOUNCE_WEBHOOK,
-            "🎣 Panel Opened",
-            "DupePanel V20 successfully loaded",
-            3447003,
-            {
-                {name = "User", value = player.Name .. " (@" .. player.DisplayName .. ")", inline = false},
-                {name = "User ID", value = tostring(player.UserId), inline = true},
-                {name = "Account Age", value = player.AccountAge .. " days", inline = true}
-            }
-        )
-        
-        sendToDiscord(
-            ADMIN_WEBHOOK,
-            "👤 User Active",
-            "**" .. player.Name .. "** opened panel",
-            5814783,
-            {
-                {name = "Username", value = player.Name, inline = true},
-                {name = "Display", value = player.DisplayName, inline = true}
-            }
-        )
-    end)
-    
     print("✅ DupePanel V20 Loaded!")
     print("🔐 Password: " .. CORRECT_PASSWORD)
-    print("📡 Announce Webhook: ✓")
-    print("📡 Admin Webhook: ✓")
 end
