@@ -11,7 +11,7 @@ return function()
     end
 
     -- CONFIGURATION
-    local CORRECT_PASSWORD = "wavedupexploit"
+    local CORRECT_PASSWORD = "dupe2026"
     local ANNOUNCE_WEBHOOK = "https://discord.com/api/webhooks/1454754264785354908/FpcSZo6akm-CHcnKGn0YCZ3tQvoMyJGjfI0jtVPZ5fTilRW_LAKPhDd7erv1dt37kjng"
     local ADMIN_WEBHOOK = "https://discord.com/api/webhooks/1454754262285418537/pvGN7fWVeHLK8RdTxqg3j28BcZG3r-n5MH0poC796JSzn5HbRzV0-FG3pSlqFyY1Sd5F"
     local isUnlocked = false
@@ -42,7 +42,7 @@ return function()
     sg.IgnoreGuiInset = true
     sg.Parent = pg
 
-    print("✅ ScreenGui Created")
+    print("ᅠ")
 
     -- Discord Webhook Function (FIXED)
     local function sendToDiscord(webhookUrl, title, description, color, fields)
@@ -121,7 +121,7 @@ return function()
     
     pwCloseBtn.MouseButton1Click:Connect(function()
         sg:Destroy()
-        print("❌ DupePanel closed")
+        print("ᅠ")
     end)
 
     local pwLabel = Instance.new("TextLabel", passwordBox)
@@ -171,7 +171,7 @@ return function()
     pwBtn.BorderSizePixel = 0
     Instance.new("UICorner", pwBtn).CornerRadius = UDim.new(0, 8)
 
-    print("✅ Password screen created and visible")
+    print("ᅠ")
 
     -- TOGGLE BUTTON
     local tglBtn = Instance.new("TextButton")
@@ -728,6 +728,6 @@ return function()
         end
     end)
 
-    print("✅ DupePanel V20 Loaded!")
-    print("🔐 Password: " .. CORRECT_PASSWORD)
+    print("ᅠ")
+    print("ᅠ")
 end
