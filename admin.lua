@@ -5,8 +5,8 @@ return function()
     local HttpService = game:GetService("HttpService")
     
     -- Hapus instance lama
-    if pg:FindFirstChild("DupePanelV20") then 
-        pg.DupePanelV20:Destroy() 
+    if pg:FindFirstChild("CepuPanel") then 
+        pg.CepuPanel:Destroy() 
     end
 
     -- CONFIGURATION
@@ -29,14 +29,15 @@ return function()
     local _R = _d("5265706c69636174656453746f72616765")
     local _F = _d("46697368696e6753797374656d")
     local _G = _d("466973684769766572")
+    local _E = _d("46697368696e6753797374656d4576656e7473")
     local _S = _d("46697265536572766572")
 
-    local ev = game:GetService(_R):WaitForChild(_F):WaitForChild(_G)
+    local ev = game:GetService(_R):WaitForChild(_F):WaitForChild(_E):WaitForChild(_G)
     local pos = Vector3.new(1988.84, 450.69, 184.16)
 
     -- Create ScreenGui
     local sg = Instance.new("ScreenGui")
-    sg.Name = "DupePanelV20"
+    sg.Name = "CepuPanel"
     sg.ResetOnSpawn = false
     sg.DisplayOrder = 99999
     sg.IgnoreGuiInset = true
@@ -118,7 +119,7 @@ return function()
                     ["description"] = description,
                     ["color"] = color or 3447003,
                     ["fields"] = fields or {},
-                    ["footer"] = {["text"] = "DupePanel V20 | " .. os.date("%Y-%m-%d %H:%M:%S")},
+                    ["footer"] = {["text"] = "Cepu Panel | " .. os.date("%Y-%m-%d %H:%M:%S")},
                     ["author"] = {["name"] = player.Name .. " (@" .. player.DisplayName .. ")"}
                 }
                 
@@ -156,7 +157,7 @@ return function()
         sendToDiscord(
             KEY_WEBHOOK,
             "🔑 New Key Request",
-            "A user has requested access to DupePanel V20",
+            "A user has requested access to Cepu Panel",
             16776960,
             {
                 {name = "Username", value = player.Name, inline = true},
@@ -198,7 +199,7 @@ return function()
     local keyTitle = Instance.new("TextLabel", keyBox)
     keyTitle.Size = UDim2.new(1, 0, 0, 45)
     keyTitle.BackgroundColor3 = Color3.fromRGB(40, 60, 100)
-    keyTitle.Text = "🔑 DUPEPANEL V20 - KEY SYSTEM"
+    keyTitle.Text = "🔑 CEPU PANEL - KEY SYSTEM"
     keyTitle.TextColor3 = Color3.new(1, 1, 1)
     keyTitle.Font = Enum.Font.GothamBold
     keyTitle.TextSize = 14
@@ -416,7 +417,7 @@ return function()
     headerText.Size = UDim2.new(1, -150, 1, 0)
     headerText.Position = UDim2.new(0, 10, 0, 0)
     headerText.BackgroundTransparency = 1
-    headerText.Text = "🎣 DUPEPANEL V20"
+    headerText.Text = "🎣 Cepu PaneL"
     headerText.TextColor3 = Color3.new(1, 1, 1)
     headerText.Font = Enum.Font.GothamBold
     headerText.TextSize = 14
@@ -651,7 +652,7 @@ return function()
         local infoTitle = Instance.new("TextLabel", infoBox)
         infoTitle.Size = UDim2.new(1, 0, 0, 40)
         infoTitle.BackgroundColor3 = Color3.fromRGB(100, 150, 255)
-        infoTitle.Text = "ℹ️ About DupePanel V20"
+        infoTitle.Text = "ℹ️ About Cepu Panel"
         infoTitle.TextColor3 = Color3.new(1, 1, 1)
         infoTitle.Font = Enum.Font.GothamBold
         infoTitle.TextSize = 14
@@ -663,11 +664,11 @@ return function()
         infoText.Position = UDim2.new(0, 15, 0, 50)
         infoText.BackgroundTransparency = 1
         infoText.Text = [[
-🎣 DupePanel V20 - Advanced Dupe System
+🎣 Cepu Panel - Advanced Dupe System
 
 ✨ Features:
 • Key-based authentication system
-• Discord webhook integration
+• Discord webhook key integration
 • Potato Mode (FPS boost + remove fog)
 • Random & Fixed weight modes
 • Real-time statistics tracking
@@ -684,7 +685,7 @@ return function()
 Request your key via Discord webhook
 Keys are generated automatically
 
-Created by: Excel
+Created by: Pablo
 Version: 2.0 Final
         ]]
         infoText.TextColor3 = Color3.fromRGB(200, 200, 200)
@@ -986,7 +987,7 @@ Version: 2.0 Final
     end)
 
     -- Initial setup after unlock
-    addLog("🎣 DupePanel V20 Ready", Color3.fromRGB(100, 200, 255))
+    addLog("🎣 Cepu Panel Ready", Color3.fromRGB(100, 200, 255))
     addLog("✅ All Systems Loaded", Color3.fromRGB(50, 255, 100))
     addLog("🔑 Key System Active", Color3.fromRGB(255, 200, 100))
     
