@@ -20,9 +20,7 @@ return function()
     local ADMIN_SETTINGS = {
         MIN_DELAY = 0.05, -- Minimal delay yang diizinkan (detik)
         MAX_AMOUNT = 2000, -- Maksimal amount per session
-        WHITELIST = {
-        "10252886103"
-        } -- UserID yang sudah verified
+        WHITELIST = {10252886103} -- UserID yang sudah verified
     }
     
     local isUnlocked = false
