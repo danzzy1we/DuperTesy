@@ -7,7 +7,7 @@ class AlightMotionAuth {
         this.ORDER_ID = "DHANNONLY-676767";
         this.API_KEY = "AIzaSyDtG1AU22ErnQD60AzBAcaknySiz9_CEq0";
         this.PRODUCT_ID = "am.full.sub.annual.19q4";
-        this.TOKEN = "mmgaobamlahbbeccfplmbkbb.AO-J1OzqG0or_GJJIx-ms8GrTm-jaglCRfhQSRPUZKpl2YspYS-oN7_94uv8RC5vQbvd_Ios2pPDStZ2n7F0hLE3FiOU7HS3R6Fquulv5xLXFECSv4ctElw";
+        this.TOKEN = "ndnccldphehmcdeihplilfed.AO-J1OyW90adCvVh-FjXKdXV_K6wr82pxY7HQC65iRo0UgNuKeqhEOQ9BUN1qIlwXP3kdhdsTUy7pKTdP5jJbTWftXmOsiaMHIZbJtTvNcLHdrWf5wMGHdk";
         this.SKU_TYPE = "subs";
         this.FIREBASE_INSTANCE_ID_TOKEN = "cSDnCyp3T-uwp07z3tL86T:APA91bFkmvvsHw5nnqa1SBFci-99DRsKClLiETdRrVcJjS5yBx1v_FbCb1d8WhBuea_zmwnYBktyTIzcRhN4b6uNOUur9wPc0gKXmJDoZic0LhNq5V2s0xI";
         this.HEADERS = {
