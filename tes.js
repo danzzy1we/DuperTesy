@@ -4,7 +4,7 @@ const readline = require('readline');
 
 class AlightMotionAuth {
     constructor() {
-        this.ORDER_ID = "DHANNONLY-676767";
+        this.ORDER_ID = "DHANLITEBOTZ";
         this.API_KEY = "AIzaSyDtG1AU22ErnQD60AzBAcaknySiz9_CEq0";
         this.PRODUCT_ID = "am.full.sub.annual.19q4";
         this.TOKEN = "ndnccldphehmcdeihplilfed.AO-J1OyW90adCvVh-FjXKdXV_K6wr82pxY7HQC65iRo0UgNuKeqhEOQ9BUN1qIlwXP3kdhdsTUy7pKTdP5jJbTWftXmOsiaMHIZbJtTvNcLHdrWf5wMGHdk";
@@ -19,7 +19,13 @@ class AlightMotionAuth {
     }
 
     generateCodeOrder() {
-        return crypto.randomInt(10000, 99999).toString();
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        let code = '';
+        for (let i = 0; i < 5; i++) {
+            const idx = crypto.randomInt(0, chars.length);
+            code += chars[idx];
+        }
+        return code;
     }
 
     extractOobCode(fullUrl) {
